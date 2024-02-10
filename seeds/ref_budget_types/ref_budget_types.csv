@@ -1,0 +1,15 @@
+ID;Budget Group ID;Budget Type
+1;1;Log Rent
+2;1;Mother Gift
+3;1;Father Insurance
+4;1;Parents Home
+5;1;Church Charity
+6;2;Emergency Savings
+7;2;Future Savings
+8;2;Reksadana
+9;2;Free Savings
+10;3;Food Expense
+11;3;Daily Needs
+12;3;Transportation
+13;3;Entertainment
+14;4;Others
