@@ -22,13 +22,13 @@ func (u incomeUsecase) Create(income domain.Income) (domain.Income, error) {
 }
 
 func (u incomeUsecase) Fetch(_date domain.DateStandard, income_type string) ([]domain.IncomeRead, error) {
-	incomes, err := u.incomeRepository.Fetch(_date, income_type)
-	return incomes, err
+	incomeReadList, err := u.incomeRepository.Fetch(_date, income_type)
+	return incomeReadList, err
 }
 
-func (u incomeUsecase) Get(id int64) (domain.IncomeRead, error) {
-	income, err := u.incomeRepository.Get(id)
-	return income, err
+func (u incomeUsecase) GetByID(id int64) (domain.IncomeRead, error) {
+	incomeRead, err := u.incomeRepository.GetByID(id)
+	return incomeRead, err
 }
 
 func (u incomeUsecase) Update(id int64, income domain.Income) (domain.Income, error) {

@@ -20,7 +20,7 @@ type UpdateIncomeRequestBody struct {
 	Amount       int64               `json:"amount"`
 }
 
-type IncomeReponse struct {
+type IncomeResponse struct {
 	Date         domain.DateStandard `json:"date"`
 	IncomeTypeID int64               `json:"income_type_id"`
 	LocationID   int64               `json:"location_id"`
@@ -28,7 +28,7 @@ type IncomeReponse struct {
 	Amount       int64               `json:"amount"`
 }
 
-type IncomeResponseSubs struct {
+type IncomeReadResponse struct {
 	Date        domain.DateStandard `json:"date"`
 	IncomeType  string              `json:"income_type"`
 	Location    string              `json:"location"`

@@ -97,7 +97,7 @@ func (r postgresIncomeRepository) Fetch(_date domain.DateStandard, income_type s
 	return incomes, nil
 }
 
-func (r postgresIncomeRepository) Get(id int64) (domain.IncomeRead, error) {
+func (r postgresIncomeRepository) GetByID(id int64) (domain.IncomeRead, error) {
 	var income domain.IncomeRead
 	query := `
 		SELECT

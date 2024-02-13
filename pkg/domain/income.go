@@ -26,7 +26,7 @@ type IncomeRead struct {
 type IncomeRepository interface {
 	Create(income Income) (Income, error)
 	Fetch(_date DateStandard, income_type string) ([]IncomeRead, error)
-	Get(id int64) (IncomeRead, error)
+	GetByID(id int64) (IncomeRead, error)
 	Update(id int64, income Income) (Income, error)
 	Delete(id int64) (Income, error)
 }
@@ -34,7 +34,7 @@ type IncomeRepository interface {
 type IncomeUsecase interface {
 	Create(income Income) (Income, error)
 	Fetch(_date DateStandard, income_type string) ([]IncomeRead, error)
-	Get(id int64) (IncomeRead, error)
+	GetByID(id int64) (IncomeRead, error)
 	Update(id int64, income Income) (Income, error)
 	Delete(id int64) (Income, error)
 }

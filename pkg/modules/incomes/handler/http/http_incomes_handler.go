@@ -25,7 +25,7 @@ func NewHttpIncomeHandler(app *fiber.App, u domain.IncomeUsecase) {
 	routes := app.Group("/incomes")
 	routes.Post("/", h.CreateIncome)
 	routes.Get("/", h.FetchIncomes)
-	routes.Get("/:id", h.GetIncome)
+	routes.Get("/:id", h.GetIncomeByID)
 	routes.Put("/:id", h.UpdateIncome)
 	routes.Delete("/:id", h.DeleteIncome)
 }
@@ -51,7 +51,6 @@ func (h *HttpIncomeHandler) CreateIncome(c *fiber.Ctx) (err error) {
 	}
 
 	incomeResponse := IncomeResponse{
-		ID:           income.ID,
 		Date:         income.Date,
 		IncomeTypeID: income.IncomeTypeID,
 		LocationID:   income.LocationID,
@@ -73,57 +72,58 @@ func (h *HttpIncomeHandler) FetchIncomes(c *fiber.Ctx) (err error) {
 	}
 	income_type = q["income_type"]
 
-	var incomes []domain.IncomeRead
-	incomes, err = h.incomeUsecase.Fetch(_date, income_type)
+	var incomeReadList []domain.IncomeRead
+	incomeReadList, err = h.incomeUsecase.Fetch(_date, income_type)
 	if err != nil {
 		fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
-	var incomeResponseSubs []IncomeResponseSubs
-	var tmpIncomeResponseSubs IncomeResponseSubs
-	for i, income := range incomes {
-		tmpIncomeResponseSubs = IncomeResponseSubs{
-			Date:        income.Date,
-			IncomeType:  income.IncomeType,
-			Location:    income.Location,
-			Description: income.Description,
-			Amount:      income.Amount,
-		}
-		incomeResponseSubs = append(incomeResponseSubs, tmpIncomeResponseSubs)
+	var incomeReadListResponse []IncomeReadResponse
+	for _, incomeRead := range incomeReadList {
+		incomeReadListResponse = append(
+			incomeReadListResponse,
+			IncomeReadResponse{
+				Date:        incomeRead.Date,
+				IncomeType:  incomeRead.IncomeType,
+				Location:    incomeRead.Location,
+				Description: incomeRead.Description,
+				Amount:      incomeRead.Amount,
+			},
+		)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(&incomeResponseSubs)
+	return c.Status(fiber.StatusOK).JSON(&incomeReadListResponse)
 }
 
-func (h *HttpIncomeHandler) GetIncome(c *fiber.Ctx) (err error) {
+func (h *HttpIncomeHandler) GetIncomeByID(c *fiber.Ctx) (err error) {
 	var id int64
 	id, err = strconv.ParseInt(c.Params("id"), 10, 64)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	var income domain.IncomeRead
-	income, err = h.incomeUsecase.Get(id)
+	var incomeRead domain.IncomeRead
+	incomeRead, err = h.incomeUsecase.GetByID(id)
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
-	incomeResponseSubs := IncomeResponseSubs{
-		Date:         income.Date,
-		IncomeTypeID: income.IncomeTypeID,
-		LocationID:   income.LocationID,
-		Description:  income.Description,
-		Amount:       income.Amount,
+	incomeReadResponse := IncomeReadResponse{
+		Date:        incomeRead.Date,
+		IncomeType:  incomeRead.IncomeType,
+		Location:    incomeRead.Location,
+		Description: incomeRead.Description,
+		Amount:      incomeRead.Amount,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(&income)
+	return c.Status(fiber.StatusOK).JSON(&incomeReadResponse)
 }
 
 func (h *HttpIncomeHandler) UpdateIncome(c *fiber.Ctx) (err error) {
 	var id int64
 	id, err = strconv.ParseInt(c.Params("id"), 10, 64)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	body := UpdateIncomeRequestBody{}
@@ -131,28 +131,34 @@ func (h *HttpIncomeHandler) UpdateIncome(c *fiber.Ctx) (err error) {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	var income domain.Income
+	income := domain.Income{
+		Date:         body.Date,
+		IncomeTypeID: body.IncomeTypeID,
+		LocationID:   body.LocationID,
+		Description:  body.Description,
+		Amount:       body.Amount,
+	}
 	income, err = h.incomeUsecase.Update(id, income)
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
-	incomeResponseSubs := IncomeResponseSubs{
-		Date:        body.Date,
-		IncomeType:  body.IncomeType,
-		Location:    body.Location,
-		Description: body.Description,
-		Amount:      body.Amount,
+	incomeResponse := IncomeResponse{
+		Date:         income.Date,
+		IncomeTypeID: income.IncomeTypeID,
+		LocationID:   income.LocationID,
+		Description:  income.Description,
+		Amount:       income.Amount,
 	}
 
-	return c.Status(fiber.StatusOK).JSON(&income)
+	return c.Status(fiber.StatusOK).JSON(&incomeResponse)
 }
 
 func (h *HttpIncomeHandler) DeleteIncome(c *fiber.Ctx) (err error) {
 	var id int64
 	id, err = strconv.ParseInt(c.Params("id"), 10, 64)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
 	var income domain.Income
@@ -161,5 +167,13 @@ func (h *HttpIncomeHandler) DeleteIncome(c *fiber.Ctx) (err error) {
 		fiber.NewError(fiber.StatusNotFound, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(&income)
+	incomeResponse := IncomeResponse{
+		Date:         income.Date,
+		IncomeTypeID: income.IncomeTypeID,
+		LocationID:   income.LocationID,
+		Description:  income.Description,
+		Amount:       income.Amount,
+	}
+
+	return c.Status(fiber.StatusOK).JSON(&incomeResponse)
 }
