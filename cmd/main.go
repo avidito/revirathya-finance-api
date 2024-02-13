@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/avidito/revirathya-finance-api/pkg"
 	"github.com/avidito/revirathya-finance-api/pkg/common/config"
 	"github.com/avidito/revirathya-finance-api/pkg/common/db"
 	"github.com/avidito/revirathya-finance-api/pkg/expense"
@@ -19,14 +20,20 @@ func main() {
 	app := fiber.New()
 	db := db.Init(c.DBUrl)
 
+	// Seeder
 	seedData := seeds.NewSeedData()
 	seeder := seeds.NewSeeder(db, seedData)
 	seeder.Load()
 
-	// Healthcheck
+	// Base Endpoint
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusOK).SendString(c.Port)
 	})
+
+	// Layering
+	repository := pkg.NewRepository(db)
+	usecase := pkg.NewUsecase(repository)
+	pkg.NewHandler(app, usecase)
 
 	// Routes
 	expense.RegisterRoute(app, db)
