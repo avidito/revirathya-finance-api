@@ -29,5 +29,6 @@ func doMigration(db *gorm.DB) {
 		&models.RefBudgetType{},
 		&models.RefSavingType{},
 		&domain.Income{},
+		&domain.Budget{},
 	)
 }
