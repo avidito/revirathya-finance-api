@@ -11,6 +11,9 @@ import (
 	_income_handler "github.com/avidito/revirathya-finance-api/pkg/modules/incomes/handler/http"
 	_postgres_income_repository "github.com/avidito/revirathya-finance-api/pkg/modules/incomes/repository/postgres"
 	_income_usecase "github.com/avidito/revirathya-finance-api/pkg/modules/incomes/usecase"
+	_saving_handler "github.com/avidito/revirathya-finance-api/pkg/modules/saving/handler/http"
+	_postgres_saving_repository "github.com/avidito/revirathya-finance-api/pkg/modules/saving/repository/postgres"
+	_saving_usecase "github.com/avidito/revirathya-finance-api/pkg/modules/saving/usecase"
 	_transfer_handler "github.com/avidito/revirathya-finance-api/pkg/modules/transfer/handler/http"
 	_postgres_transfer_repository "github.com/avidito/revirathya-finance-api/pkg/modules/transfer/repository/postgres"
 	_transfer_usecase "github.com/avidito/revirathya-finance-api/pkg/modules/transfer/usecase"
@@ -24,6 +27,7 @@ type Repository struct {
 	postgresIncomeRepository   domain.IncomeRepository
 	postgresExpenseRepository  domain.ExpenseRepository
 	postgresTransferRepository domain.TransferRepository
+	postgresSavingRepository   domain.SavingRepository
 }
 
 func NewRepository(db *gorm.DB) *Repository {
@@ -32,6 +36,7 @@ func NewRepository(db *gorm.DB) *Repository {
 		postgresIncomeRepository:   _postgres_income_repository.NewPostgresIncomesRepository(db),
 		postgresExpenseRepository:  _postgres_expense_repository.NewPostgresExpenseRepository(db),
 		postgresTransferRepository: _postgres_transfer_repository.NewPostgresTransferRepository(db),
+		postgresSavingRepository:   _postgres_saving_repository.NewPostgresSavingRepository(db),
 	}
 }
 
@@ -41,6 +46,7 @@ type Usecase struct {
 	incomeUsecase   domain.IncomeUsecase
 	expenseUsecase  domain.ExpenseUsecase
 	transferUsecase domain.TransferUsecase
+	savingUsecase   domain.SavingUsecase
 }
 
 func NewUsecase(r *Repository) *Usecase {
@@ -49,6 +55,7 @@ func NewUsecase(r *Repository) *Usecase {
 		incomeUsecase:   _income_usecase.NewIncomeUsecease(r.postgresIncomeRepository),
 		expenseUsecase:  _expense_usecase.NewExpenseUsecase(r.postgresExpenseRepository),
 		transferUsecase: _transfer_usecase.NewTransferUsecase(r.postgresTransferRepository),
+		savingUsecase:   _saving_usecase.NewSavingUsecase(r.postgresSavingRepository),
 	}
 }
 
@@ -58,6 +65,7 @@ type Handler struct {
 	incomeHandler   _income_handler.HttpIncomeHandler
 	expenseHandler  _expense_handler.HttpExpenseHandler
 	transferHandler _transfer_handler.HttpTransferHandler
+	savingHandler   _saving_handler.HttpSavingHandler
 }
 
 func NewHandler(app *fiber.App, u *Usecase) {
@@ -65,4 +73,5 @@ func NewHandler(app *fiber.App, u *Usecase) {
 	_income_handler.NewHttpIncomeHandler(app, u.incomeUsecase)
 	_expense_handler.NewHttpExpenseHandler(app, u.expenseUsecase)
 	_transfer_handler.NewHttpTransferHandler(app, u.transferUsecase)
+	_saving_handler.NewHttpSavingHandler(app, u.savingUsecase)
 }
