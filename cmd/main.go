@@ -6,7 +6,6 @@ import (
 	"github.com/avidito/revirathya-finance-api/pkg"
 	"github.com/avidito/revirathya-finance-api/pkg/common/config"
 	"github.com/avidito/revirathya-finance-api/pkg/common/db"
-	"github.com/avidito/revirathya-finance-api/pkg/expense"
 	"github.com/avidito/revirathya-finance-api/seeds"
 	"github.com/gofiber/fiber/v2"
 )
@@ -34,9 +33,6 @@ func main() {
 	repository := pkg.NewRepository(db)
 	usecase := pkg.NewUsecase(repository)
 	pkg.NewHandler(app, usecase)
-
-	// Routes
-	expense.RegisterRoute(app, db)
 
 	app.Listen(c.Port)
 }
