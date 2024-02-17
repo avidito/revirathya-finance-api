@@ -22,7 +22,6 @@ func Init(url string) *gorm.DB {
 
 func doMigration(db *gorm.DB) {
 	db.AutoMigrate(
-		&models.Expense{},
 		&models.RefIncomeType{},
 		&models.RefLocation{},
 		&models.RefBudgetGroup{},
@@ -30,5 +29,6 @@ func doMigration(db *gorm.DB) {
 		&models.RefSavingType{},
 		&domain.Income{},
 		&domain.Budget{},
+		&domain.Expense{},
 	)
 }
