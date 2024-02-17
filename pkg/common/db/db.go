@@ -30,5 +30,6 @@ func doMigration(db *gorm.DB) {
 		&domain.Income{},
 		&domain.Budget{},
 		&domain.Expense{},
+		&domain.Transfer{},
 	)
 }
