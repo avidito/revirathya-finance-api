@@ -3,7 +3,6 @@ package db
 import (
 	"log"
 
-	"github.com/avidito/revirathya-finance-api/pkg/common/models"
 	"github.com/avidito/revirathya-finance-api/pkg/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -22,11 +21,11 @@ func Init(url string) *gorm.DB {
 
 func doMigration(db *gorm.DB) {
 	db.AutoMigrate(
-		&models.RefIncomeType{},
-		&models.RefLocation{},
-		&models.RefBudgetGroup{},
-		&models.RefBudgetType{},
-		&models.RefSavingType{},
+		&domain.RefIncomeType{},
+		&domain.RefLocation{},
+		&domain.RefBudgetGroup{},
+		&domain.RefBudgetType{},
+		&domain.RefSavingType{},
 		&domain.Income{},
 		&domain.Budget{},
 		&domain.Expense{},
