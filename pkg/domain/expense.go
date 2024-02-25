@@ -1,18 +1,14 @@
 package domain
 
-import (
-	"github.com/avidito/revirathya-finance-api/pkg/common/models"
-)
-
 type Expense struct {
-	ID           int64                `json:"id" gorm:"primaryKey,AUTO_INCREMENT"`
-	Date         DateStandard         `json:"date"`
-	BudgetTypeID int64                `json:"budget_type_id"`
-	LocationID   int64                `json:"location_id"`
-	Description  string               `json:"description"`
-	Amount       int64                `json:"amount"`
-	BudgetType   models.RefBudgetType `json:"budget_type" gorm:"foreignKey:BudgetTypeID;references:ID"`
-	Location     models.RefLocation   `json:"location" gorm:"foreignKey:LocationID;references:ID"`
+	ID           int64         `json:"id" gorm:"primaryKey,AUTO_INCREMENT"`
+	Date         DateStandard  `json:"date"`
+	BudgetTypeID int64         `json:"budget_type_id"`
+	LocationID   int64         `json:"location_id"`
+	Description  string        `json:"description"`
+	Amount       int64         `json:"amount"`
+	BudgetType   RefBudgetType `json:"budget_type" gorm:"foreignKey:BudgetTypeID;references:ID"`
+	Location     RefLocation   `json:"location" gorm:"foreignKey:LocationID;references:ID"`
 }
 
 type ExpenseRead struct {
