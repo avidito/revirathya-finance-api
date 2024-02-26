@@ -5,6 +5,9 @@ import (
 	_budget_handler "github.com/avidito/revirathya-finance-api/pkg/modules/budget/handler/http"
 	_postgres_budget_repository "github.com/avidito/revirathya-finance-api/pkg/modules/budget/repository/postgres"
 	_budget_usecase "github.com/avidito/revirathya-finance-api/pkg/modules/budget/usecase"
+	_cycle_handler "github.com/avidito/revirathya-finance-api/pkg/modules/cycle/handler/http"
+	_postgres_cycle_repository "github.com/avidito/revirathya-finance-api/pkg/modules/cycle/repository/postgres"
+	_cycle_usecase "github.com/avidito/revirathya-finance-api/pkg/modules/cycle/usecase"
 	_expense_handler "github.com/avidito/revirathya-finance-api/pkg/modules/expense/handler/http"
 	_postgres_expense_repository "github.com/avidito/revirathya-finance-api/pkg/modules/expense/repository/postgres"
 	_expense_usecase "github.com/avidito/revirathya-finance-api/pkg/modules/expense/usecase"
@@ -32,6 +35,7 @@ type Repository struct {
 	postgresTransferRepository  domain.TransferRepository
 	postgresSavingRepository    domain.SavingRepository
 	postgresReferenceRepository domain.ReferenceRepository
+	postgresCycleRepository     domain.CycleRepository
 }
 
 func NewRepository(db *gorm.DB) *Repository {
@@ -42,6 +46,7 @@ func NewRepository(db *gorm.DB) *Repository {
 		postgresTransferRepository:  _postgres_transfer_repository.NewPostgresTransferRepository(db),
 		postgresSavingRepository:    _postgres_saving_repository.NewPostgresSavingRepository(db),
 		postgresReferenceRepository: _postgres_reference_repository.NewPostgresReferenceRepository(db),
+		postgresCycleRepository:     _postgres_cycle_repository.NewPostgresCycleRepository(db),
 	}
 }
 
@@ -53,6 +58,7 @@ type Usecase struct {
 	transferUsecase  domain.TransferUsecase
 	savingUsecase    domain.SavingUsecase
 	referenceUsecase domain.ReferenceUsecase
+	cycleUsecase     domain.CycleUsecase
 }
 
 func NewUsecase(r *Repository) *Usecase {
@@ -63,6 +69,7 @@ func NewUsecase(r *Repository) *Usecase {
 		transferUsecase:  _transfer_usecase.NewTransferUsecase(r.postgresTransferRepository),
 		savingUsecase:    _saving_usecase.NewSavingUsecase(r.postgresSavingRepository),
 		referenceUsecase: _reference_usecase.NewReferenceUsecase(r.postgresReferenceRepository),
+		cycleUsecase:     _cycle_usecase.NewCycleUsecase(r.postgresCycleRepository),
 	}
 }
 
@@ -82,4 +89,5 @@ func NewHandler(app *fiber.App, u *Usecase) {
 	_transfer_handler.NewHttpTransferHandler(app, u.transferUsecase)
 	_saving_handler.NewHttpSavingHandler(app, u.savingUsecase)
 	_reference_handler.NewHttpReferenceHandler(app, u.referenceUsecase)
+	_cycle_handler.NewHttpCycleHandler(app, u.cycleUsecase)
 }
